@@ -18,6 +18,9 @@
 	<body>
 
 		<div id="time-left">30</div>
+		<div id="question-div"></div>
+		<div id="answer-choices-div"></div>
+		<button id="start-button">Start</button>
 
 		<script type="text/javascript">
 			
@@ -26,10 +29,23 @@
 
 				loadQuestionsIntoArray();
 
+				$("#start-button").click(function(){
+					gameClock.timer();
+					$("#start-button").remove();
+					printQuestion(0);
+					triviaGameVars.questionNumber++;
+				});
+
+				$(document).on("click",".answer-choice", function(){
+
+					$("#question-div").html("");
+					$(".answer-choice").remove();
+					printQuestion(triviaGameVars.questionNumber);
+					triviaGameVars.questionNumber++;
+
+				});
+
 			});
-
-			gameClock.timer();
-
 
 		</script>
 
