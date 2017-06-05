@@ -18,12 +18,17 @@
 	<body>
 
 		<div id="time-left">30</div>
-		<div id="question-div"></div>
-		<div id="answer-choices-div"></div>
-		<button id="start-button">Start</button>
 
-		<script type="text/javascript">
+		<div id="question-container">
 			
+			<div id="question-div"></div>
+			<div id="answer-choices-div"></div>
+			<div id="answer-gif-div"></div>
+			<button id="start-button">Start</button>
+
+		</div>
+
+		<script type="text/javascript">		
 
 			$(document).ready(function (){
 
@@ -34,14 +39,61 @@
 					$("#start-button").remove();
 					printQuestion(0);
 					triviaGameVars.questionNumber++;
+
 				});
 
 				$(document).on("click",".answer-choice", function(){
 
+					if (triviaGameVars.questionNumber < triviaGameVars.questionsArray.length){
+						
+						//Variables created to 
+						var idOfSelectedAnswer = this.id;
+						var selectedAnswerText = assignSelectedAnswer(idOfSelectedAnswer);
+
+						if ( selectedAnswerText  == triviaGameVars.questionsArray[triviaGameVars.questionNumber].correctAnswer){
+							$("#question-div").html("CORRECT!");
+						}
+
+						else {
+
+							$("#question-div").html("WRONG!");
+
+						}						
+
+
+						$("#answer-choices-div").html("The correct Answer is: " + triviaGameVars.questionsArray[triviaGameVars.questionNumber].correctAnswer);
+						$(".answer-choice").remove();
+						gameClock.resetClock();
+						$("#time-left").html("");
+						triviaGameVars.questionNumber++;
+						printNextQuestionButton();
+						
+						
+					}
+
+					if (triviaGameVars.questionNumber == triviaGameVars.questionsArray.length){
+						
+						//Variables created to 
+						var idOfSelectedAnswer = this.id;
+						var selectedAnswerText = assignSelectedAnswer(idOfSelectedAnswer);
+
+						$("#question-div").html("GAME OVER");
+						$("#answer-choices-div").html("");
+						gameClock.resetClock;
+						$("#time-left").html(gameClock.timeLeft);
+
+					}
+
+				});
+
+				$(document).on("click", "#next-question-button", function(){
+
 					$("#question-div").html("");
-					$(".answer-choice").remove();
+					$("#next-question-button").remove();
+					$("#time-left").html(gameClock.timeLeft);
 					printQuestion(triviaGameVars.questionNumber);
-					triviaGameVars.questionNumber++;
+					gameClock.timer();
+					
 
 				});
 
