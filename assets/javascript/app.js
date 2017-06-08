@@ -2,7 +2,7 @@
 var gameClock = {
 
 	//set how much time the player gets
-	timeLeft:  30,
+	timeLeft:  10,
 	//keep track of which numer question the player is on
 	roundNumber: 0,
 
@@ -18,6 +18,13 @@ var gameClock = {
     	
     	}
 
+    	if (gameClock.timeLeft === 0){
+
+    		displayCorrectAnswer();
+    		$("#time-left").html("TIME'S UP!");
+
+    	}
+
   	},
 
   	//run the countdown function once every second to make our timer
@@ -30,7 +37,8 @@ var gameClock = {
   	resetClock: function(){
 
   		clearInterval(gameClock.intervalId);
-  		gameClock.timeLeft = 30;
+  		gameClock.timeLeft = 10;
+  		$("#time-left").html("");
 
   	}
 
@@ -40,27 +48,67 @@ var triviaGameVars = {
 
 	questionsArray: [],
 	questionNumber: 0,
-
+	correctAnswersNum: 0,
+	incorrectAnswersNum: 0,
 
 };	
 
+function answerSelection(userSelection){
+
+			if ( userSelection  == triviaGameVars.questionsArray[triviaGameVars.questionNumber].correctAnswer ){
+				
+				$("#question-div").html("CORRECT!");
+				$("#answer-choices-div").html();
+				printNextQuestionButton();
+				triviaGameVars.correctAnswersNum++;
+
+			}
+
+			else {
+
+				$("#question-div").html("WRONG!");
+				$("#answer-choices-div").html();
+				displayCorrectAnswer();
+				triviaGameVars.incorrectAnswersNum++;
+
+			}						
+
+};
+
 function assignSelectedAnswer(answerId) {
 
-	if ( answerId == "answer-a" ) {
-		 return triviaGameVars.questionsArray[triviaGameVars.questionNumber].answerA;
+	if ( answerId === "answer-a" ) {
+		return triviaGameVars.questionsArray[triviaGameVars.questionNumber].answerA;
 	}
 
-	else if ( answerId == "answer-b" ) {
+	else if ( answerId === "answer-b" ) {
 		return triviaGameVars.questionsArray[triviaGameVars.questionNumber].answerB;
 	}
 
-	else if ( answerId == "answer-c" ) {
+	else if ( answerId === "answer-c" ) {
 		return triviaGameVars.questionsArray[triviaGameVars.questionNumber].answerC;
 	}
 
-	else {
+	else if ( answerId === "answer-d" ) {
 		return triviaGameVars.questionsArray[triviaGameVars.questionNumber].answerD;
 	}
+
+};
+
+function displayCorrectAnswer(){
+
+	$(".answer-choice").remove();
+	$("#answer-choices-div").html("The correct Answer is: " + triviaGameVars.questionsArray[triviaGameVars.questionNumber].correctAnswer);
+	gameClock.resetClock();
+	printNextQuestionButton();
+
+};
+
+function initializeGame(){
+
+	gameClock.timer();
+	$("#start-button").remove();
+	$("#time-left").html(gameClock.timeLeft);
 
 };
 
@@ -71,8 +119,8 @@ function loadQuestionsIntoArray(){
 
 		"question0", 
 		"a0",
-		"b",
-		"c",
+		"b0",
+		"c0",
 		"d0",
 		"d0",
 		"gif"
@@ -83,10 +131,10 @@ function loadQuestionsIntoArray(){
 	var question1 = new question(
 
 		"question1", 
-		"a0",
-		"b",
+		"a1",
+		"b1",
 		"c1",
-		"d",
+		"d1",
 		"c1",
 		"gif"
 
@@ -96,9 +144,9 @@ function loadQuestionsIntoArray(){
 	var question2 = new question(
 
 		"question2", 
-		"a0",
-		"b",
-		"c",
+		"a2",
+		"b2",
+		"c2",
 		"d2",
 		"d2",
 		"gif"
@@ -108,10 +156,10 @@ function loadQuestionsIntoArray(){
 
 	var question3 = new question(
 		"question3", 
-		"a0",
+		"a3",
 		"b3",
-		"c",
-		"d",
+		"c3",
+		"d3",
 		"b3",
 		"gif"
 	);
@@ -119,9 +167,9 @@ function loadQuestionsIntoArray(){
 
 	var question4 = new question(
 		"question4", 
-		"a0",
+		"a4",
 		"b",
-		"c",
+		"c4",
 		"d",
 		"c4",
 		"gif"
@@ -130,7 +178,7 @@ function loadQuestionsIntoArray(){
 
 	var question5 = new question(
 		"question5", 
-		"a0",
+		"a5",
 		"b5",
 		"c",
 		"d",
@@ -141,7 +189,7 @@ function loadQuestionsIntoArray(){
 
 	var question6 = new question(
 		"question6", 
-		"a0",
+		"a6",
 		"b",
 		"c",
 		"d6",
@@ -152,7 +200,7 @@ function loadQuestionsIntoArray(){
 
 	var question7 = new question(
 		"question7", 
-		"a0",
+		"a7",
 		"b",
 		"c7",
 		"d",
@@ -193,6 +241,8 @@ function printNextQuestionButton(){
 
 function printQuestion(questionNum) {
 	
+	$("#answer-choices-div").html("");
+
 	//Print question to page
 	var newDiv = $("<div></div>").text(triviaGameVars.questionsArray[questionNum].questionText);
 	$("#question-div").append(newDiv);
