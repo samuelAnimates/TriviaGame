@@ -2,7 +2,7 @@
 var gameClock = {
 
 	//set how much time the player gets
-	timeLeft:  10,
+	timeLeft:  30,
 	//keep track of which numer question the player is on
 	roundNumber: 0,
 
@@ -14,14 +14,24 @@ var gameClock = {
     	if (gameClock.timeLeft > 0){
     		
     		gameClock.timeLeft--;
-    		$("#time-left").html(gameClock.timeLeft);
+    		$("#time-left").html("Time Left: " + gameClock.timeLeft);
     	
     	}
 
     	if (gameClock.timeLeft === 0){
 
-    		displayCorrectAnswer();
-    		$("#time-left").html("TIME'S UP!");
+    		if (triviaGameVars.questionNumber === triviaGameVars.questionsArray.length-1){
+
+				displayEndGameScreen();
+				clearInterval(gameClock.intervalId);
+
+			}
+
+			else {
+    			displayCorrectAnswer();
+    			$("#time-left").html("TIME'S UP!");
+    			delayDisplayNextQuestion();
+    		}
 
     	}
 
@@ -37,7 +47,7 @@ var gameClock = {
   	resetClock: function(){
 
   		clearInterval(gameClock.intervalId);
-  		gameClock.timeLeft = 10;
+  		gameClock.timeLeft = 30;
   		$("#time-left").html("");
 
   	}
@@ -55,11 +65,12 @@ var triviaGameVars = {
 
 function answerSelection(userSelection){
 
-			if ( userSelection  == triviaGameVars.questionsArray[triviaGameVars.questionNumber].correctAnswer ){
+			if ( userSelection  === triviaGameVars.questionsArray[triviaGameVars.questionNumber].correctAnswer ){
 				
 				$("#question-div").html("CORRECT!");
-				$("#answer-choices-div").html();
-				printNextQuestionButton();
+				$("#answer-choices-div").html("");
+				gameClock.resetClock();
+				displayAnswerGif();
 				triviaGameVars.correctAnswersNum++;
 
 			}
@@ -95,20 +106,75 @@ function assignSelectedAnswer(answerId) {
 
 };
 
+function clearAnswerGif(){
+
+	$("#answer-gif-img").attr("src", "")
+
+}
+
+function delayDisplayNextQuestion(){
+
+	setTimeout(function(){ 
+						
+		if (triviaGameVars.questionNumber === triviaGameVars.questionsArray.length-1){
+
+			displayEndGameScreen();
+
+		}
+
+		else {
+			prepareForNextQuestion();
+			printQuestion(triviaGameVars.questionNumber);
+			gameClock.timer();
+		}
+
+	}, 3000);
+
+
+}
+
+function displayAnswerGif(){
+
+	$("#answer-gif-img").attr("src", triviaGameVars.questionsArray[triviaGameVars.questionNumber].gifAddress);
+
+};
+
 function displayCorrectAnswer(){
 
 	$(".answer-choice").remove();
-	$("#answer-choices-div").html("The correct Answer is: " + triviaGameVars.questionsArray[triviaGameVars.questionNumber].correctAnswer);
+	$("#answer-choices-div").html("The correct answer is: " + triviaGameVars.questionsArray[triviaGameVars.questionNumber].correctAnswer);
 	gameClock.resetClock();
-	printNextQuestionButton();
+	clearAnswerGif();
+	displayAnswerGif();
+
+};
+
+function displayEndGameScreen(){
+
+	gameClock.resetClock;
+	$("#question-div").html("GAME OVER");
+	$("#answer-choices-div").html("You got " + triviaGameVars.correctAnswersNum + " questions correct, and " + triviaGameVars.incorrectAnswersNum + " questions wrong!");
+	$("#next-question-button").remove();
+	
+
+	var restartButton = $("<button id='restart-button' class='center-block'>Restart Game</div>");
+	$("#buttons-div").append(restartButton);
 
 };
 
 function initializeGame(){
 
+	triviaGameVars.questionNumber = 0;
+	triviaGameVars.correctAnswersNum = 0;
+	triviaGameVars.incorrectAnswersNum = 0;
+	gameClock.roundNumber = 0;
 	gameClock.timer();
 	$("#start-button").remove();
-	$("#time-left").html(gameClock.timeLeft);
+	clearAnswerGif();
+	$("#time-left").html("Time Left" + gameClock.timeLeft);
+	$("#question-div").empty();
+	$("#question-container").removeClass("bg-cheese");
+	$("#question-container").addClass("bg-white");
 
 };
 
@@ -117,131 +183,136 @@ function loadQuestionsIntoArray(){
 
 	var question0 = new question(
 
-		"question0", 
-		"a0",
-		"b0",
-		"c0",
-		"d0",
-		"d0",
-		"gif"
+		"Kraft product Easy Cheese - a spray-can cheese - is described as what on its packaging?", 
+		"Process cheese-flavored snack",
+		"Pasteurized process cheese food",
+		"Prepared cheese product",
+		"Pasteurized cheese snack",
+		"Pasteurized cheese snack",
+		"https://media.giphy.com/media/uDgAIENTgHFq8/giphy.gif"
 
 	);
 	triviaGameVars.questionsArray.push(question0);
 
 	var question1 = new question(
 
-		"question1", 
-		"a1",
-		"b1",
-		"c1",
-		"d1",
-		"c1",
-		"gif"
+		"According to the USDA, a 1oz serving of gruyere typically has how many calories?", 
+		"98",
+		"164",
+		"117",
+		"22",
+		"117",
+		"https://media.giphy.com/media/NJRs1VNx2JpGo/giphy.gif"
 
 	);
 	triviaGameVars.questionsArray.push(question1);
 
 	var question2 = new question(
 
-		"question2", 
-		"a2",
-		"b2",
-		"c2",
-		"d2",
-		"d2",
-		"gif"
+		"The World's Heaviest Cheese was created in 1995. How much did it weigh?", 
+		"10, 001 lbs",
+		"80,583 lbs",
+		"25,211 lbs",
+		"57,518 lbs",
+		"57,518 lbs",
+		"https://media.giphy.com/media/26vUuei4tCrdRmlkk/giphy.gif"
 
 	);
 	triviaGameVars.questionsArray.push(question2);
 
 	var question3 = new question(
-		"question3", 
-		"a3",
-		"b3",
-		"c3",
-		"d3",
-		"b3",
-		"gif"
+		"Which figure in Greek mythology is credited with teaching humans how to make cheese?", 
+		"Asclepius",
+		"Aristaeus",
+		"Peleus",
+		"Zarex",
+		"Aristaeus",
+		"https://media.giphy.com/media/3o2eajQrCCMF2/giphy.gif"
 	);
 	triviaGameVars.questionsArray.push(question3);
 
 	var question4 = new question(
-		"question4", 
-		"a4",
-		"b",
-		"c4",
-		"d",
-		"c4",
-		"gif"
+		"What is the minimum number of days a raw milk cheese must be aged if it is to be sold in the US?", 
+		"40",
+		"50",
+		"60",
+		"70",
+		"60",
+		"https://media.giphy.com/media/Xup9iir9E4qHK/giphy.gif"
 	);
 	triviaGameVars.questionsArray.push(question4);
 
 	var question5 = new question(
-		"question5", 
-		"a5",
-		"b5",
-		"c",
-		"d",
-		"b5",
-		"gif"
+		"Wich of these cheeses typically has the highest fat content?", 
+		"Cottage Cheese",
+		"Blue Stilton",
+		"Halloumi",
+		"Paneer",
+		"Blue Stilton",
+		"https://media.giphy.com/media/l1L2UkgpuiE4U/giphy.gif"
 	);
 	triviaGameVars.questionsArray.push(question5);
 
 	var question6 = new question(
-		"question6", 
-		"a6",
-		"b",
-		"c",
-		"d6",
-		"d6",
-		"gif"
+		"Which of these 'cheesy' snack foods is actually vegan?", 
+		"Cheese Nips Chips",
+		"Cheez-It Reduced Fat White Cheddar Crackers",
+		"Flamin' Hot Cheetos",
+		"Spicy Sweet Chili Doritos",
+		"Spicy Sweet Chili Doritos",
+		"https://media.giphy.com/media/34Gfxe9lTU22I/giphy.gif"
 	);
 	triviaGameVars.questionsArray.push(question6);
 
 	var question7 = new question(
-		"question7", 
-		"a7",
-		"b",
-		"c7",
-		"d",
-		"c7",
-		"gif"
+		"Pule cheese, one of the most expensive in the world, is made from the milk of what animal?", 
+		"Camel",
+		"Horse",
+		"Donkey",
+		"Goat",
+		"Donkey",
+		"https://media.giphy.com/media/11hrE6lugPM9Ww/giphy.gif"
 	);
 	triviaGameVars.questionsArray.push(question7);
 
 	var question8 = new question(
-		"question8", 
-		"a8",
-		"b",
-		"c",
-		"d",
-		"a8",
-		"gif"
+		"What is pule's country of origin?", 
+		"Serbia",
+		"Turkmenistan",
+		"Portugal",
+		"Cyprus",
+		"Serbia",
+		"https://media.giphy.com/media/3oEjHKh8Nnmr9KDCJW/giphy.gif"
 	);
 	triviaGameVars.questionsArray.push(question8);
 
 	var question9 = new question(
-		"question9", 
-		"a9",
-		"b",
-		"c",
-		"d",
-		"a9",
-		"gif"
+		"According to a 2014 report by the International Dairy Federation, which country consumes the most cheese per capita?", 
+		"France",
+		"Italy",
+		"Greece",
+		"Switzerland",
+		"France",
+		"https://media.giphy.com/media/z7WDgVoPhLo7S/giphy.gif"
 	);
 	triviaGameVars.questionsArray.push(question9);
 
 };
 
-function printNextQuestionButton(){
+function prepareForNextQuestion(){
 
-	$("#question-container").append("<button id='next-question-button'>Next Question</button>");
+	$("#question-div").html("");
+	$("#next-question-button").remove();
+	$("#answer-choices-div").html("");
+	triviaGameVars.questionNumber++;
+	$("#time-left").html("Time Left: " + gameClock.timeLeft);
 
-};
+}
 
 function printQuestion(questionNum) {
 	
 	$("#answer-choices-div").html("");
+	$("#answer-gif-img").attr("src", "");
 
 	//Print question to page
 	var newDiv = $("<div></div>").text(triviaGameVars.questionsArray[questionNum].questionText);

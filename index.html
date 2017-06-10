@@ -4,30 +4,56 @@
 
 		<title>Trivia Game</title>
 
-		<!-- JQuery -->
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+		<!-- jQuery library -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-		<!-- -->
+		<!-- Bootstrap Latest compiled JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<!-- Custom Javascript File -->
 		<script src="./assets/javascript/app.js"></script>
 
-		<!-- Bootstrap -->
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- Custom stylesheet -->
+		<link rel="stylesheet" href="./assets/css/style.css">
 
 	</head>
 
-	<body>
+	<body class="bg-space">
 
+		<div class="jumbotron bg-cheese" 
+			<div class="container">
+				<h2 class="bold-font outline-white text-center" id="question-div">Cheese Trivia</h2>
+			</div>
+		</div>
 
-		<div id="question-container">
+		<div id="question-container" class="bold-font brdr-radius-25px bg-cheese col-xs-8 col-xs-offset-2 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 pad-10px rounded">
 			
-			<div id="question-div"></div>
-			<div id="answer-choices-div"></div>
-			<div id="answer-gif-div"></div>
-			<button id="start-button">Start</button>
+			<div class="row">
+					<div id="answer-choices-div" class="text-center pad-10px"></div>
+			</div>
+
+			<div class="row">
+				<div id="answer-gif-div" class="pad-10px">
+					<img id="answer-gif-img" class="center-block max-h-200px img-fluid" src="https://media.giphy.com/media/xDIXRIuUbgpsA/giphy.gif">
+				</div>
+			</div>
+
+			<div class="row">
+				<div id="buttons-div" class="pad-10px">
+					<button id="start-button" class="center-block">Start</button>
+				</div>
+			</div>
+
+			<div class="row">
+					<div id="time-left" class="pad-10px font-size-20px text-center"></div>
+			</div>
 
 		</div>
 
-		<div id="time-left"></div>
+		
 
 		<script type="text/javascript">		
 
@@ -48,33 +74,15 @@
 					var idOfSelectedAnswer = this.id;
 					var selectedAnswerText = assignSelectedAnswer(idOfSelectedAnswer);
 					answerSelection(selectedAnswerText);
+					delayDisplayNextQuestion();
 
 				});
-	
 
-				$(document).on("click", "#next-question-button", function(){
+				$(document).on("click", "#restart-button", function(){
 
-					if (triviaGameVars.questionNumber === triviaGameVars.questionsArray.length-1){
-
-						$("#question-div").html("GAME OVER");
-						$("#answer-choices-div").html("Your score is " + triviaGameVars.correctAnswersNum + " out of 10!");
-						$("#next-question-button").remove();
-						$("#time-left").html("");
-
-					}
-
-					else {
-
-						$("#question-div").html("");
-						$("#next-question-button").remove();
-						$("#time-left").html(gameClock.timeLeft);
-						$("#answer-choices-div").html();
-						triviaGameVars.questionNumber++;
-						printQuestion(triviaGameVars.questionNumber);
-						gameClock.timer();
-						
-
-					}
+					$("#restart-button").remove();
+					initializeGame();
+					printQuestion(triviaGameVars.questionNumber);
 
 				});
 
